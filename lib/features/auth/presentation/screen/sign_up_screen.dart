@@ -1,6 +1,9 @@
 import 'package:chat_app/core/validator/validator.dart';
 import 'package:chat_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_button.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_form_container_widget.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_header_widget.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_navigation_link_widget.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,108 +16,122 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passController = TextEditingController();
-  TextEditingController cnfrmController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _confirmController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('R E G I S T E R', style: TextStyle(color: Colors.white)),
-        leading: SizedBox(),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-      ),
-      body: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Container(
-            margin: EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: .center,
-              children: [
-                Text(
-                  'Register your account',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                AuthTextField(
-                  hintText: 'Enter name',
-                  controller: nameController,
-                  validator: validateName,
-                ),
-                SizedBox(height: 10),
-                AuthTextField(
-                  hintText: 'Enter email',
-                  controller: emailController,
-                  validator: validateEmail,
-                ),
-                SizedBox(height: 10),
-                AuthTextField(
-                  hintText: 'Enter password',
-                  controller: passController,
-                  validator: validatePassword,
-                ),
-                SizedBox(height: 10),
-                AuthTextField(
-                  hintText: 'Confirm password',
-                  controller: cnfrmController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Enter confirm password';
-                    }
-                    if (passController.text != value) {
-                      return 'Passwords does not match';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                AuthButton(
-                  text: 'Sign up',
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      context.read<AuthBloc>().add(
-                        AuthSignIn(
-                          name: nameController.text,
-                          email: emailController.text,
-                          password: passController.text,
-                        ),
-                      );
-                      print('true');
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Already have an account? ',
-                      style: TextStyle(
-                        fontSize: 19,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.blue.shade50,
+              Colors.blue.shade100,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const AuthHeaderWidget(
+                        title: 'Create Account',
+                        subtitle: 'Sign up to get started',
                       ),
-                      children: [
-                        TextSpan(
-                          text: 'Login',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            decoration: TextDecoration.underline,
+                      AuthFormContainerWidget(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              AuthTextField(
+                                header: 'Name',
+                                hintText: 'Enter your name',
+                                controller: _nameController,
+                                validator: validateName,
+                                keyboardType: TextInputType.name,
+                              ),
+                              AuthTextField(
+                                header: 'Email',
+                                hintText: 'Enter your email',
+                                controller: _emailController,
+                                validator: validateEmail,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                              AuthTextField(
+                                header: 'Password',
+                                hintText: 'Enter your password',
+                                controller: _passController,
+                                obscureText: true,
+                                validator: validatePassword,
+                              ),
+                              AuthTextField(
+                                header: 'Confirm Password',
+                                hintText: 'Confirm your password',
+                                controller: _confirmController,
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please confirm your password';
+                                  }
+                                  if (_passController.text != value) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              AuthButton(
+                                text: 'Sign Up',
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    context.read<AuthBloc>().add(
+                                          AuthSignIn(
+                                            name: _nameController.text,
+                                            email: _emailController.text,
+                                            password: _passController.text,
+                                          ),
+                                        );
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                              AuthNavigationLinkWidget(
+                                leadingText: 'Already have an account?',
+                                linkText: 'Login',
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

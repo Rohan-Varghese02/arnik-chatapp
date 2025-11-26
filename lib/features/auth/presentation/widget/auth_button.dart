@@ -18,21 +18,33 @@ class AuthButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
+      height: 56,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue.shade700,
+          disabledBackgroundColor: Colors.grey.shade300,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
         onPressed: isEnabled && !isLoading ? onPressed : null,
         child: isLoading
             ? SizedBox(
-                height: 20,
-                width: 20,
-                child: const CircularProgressIndicator(strokeWidth: 2),
+                height: 24,
+                width: 24,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
               )
             : Text(
                 text,
-                style: TextStyle(
-                  fontSize: 16,
+                style: const TextStyle(
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
+                  letterSpacing: 0.5,
                 ),
               ),
       ),

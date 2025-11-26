@@ -4,6 +4,9 @@ import 'package:chat_app/core/validator/validator.dart';
 import 'package:chat_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:chat_app/features/auth/presentation/screen/sign_up_screen.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_button.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_form_container_widget.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_header_widget.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_navigation_link_widget.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,90 +19,99 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('L O G I N', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-      ),
-
-      body: SafeArea(
-        child: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            // TODO: implement listener
-          },
-          child: Container(
-            margin: EdgeInsets.all(15),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Login to your account',
-                    style: TextStyle(fontSize: 25, color: Colors.black),
-                  ),
-                  SizedBox(height: 10),
-                  AuthTextField(
-                    hintText: 'Enter Email',
-                    controller: emailController,
-                    obscureText: false,
-                    validator: validateEmail,
-                  ),
-                  SizedBox(height: 10),
-                  AuthTextField(
-                    hintText: 'Enter Password',
-                    controller: passController,
-                    validator: validatePassword,
-                  ),
-                  SizedBox(height: 10),
-                  AuthButton(
-                    text: 'Login',
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        log(emailController.text);
-                        context.read<AuthBloc>().add(
-                          AuthLogin(
-                            email: emailController.text,
-                            pasword: passController.text,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => SignUpScreen()),
-                      );
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Dont have an account? ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {},
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue.shade50, Colors.blue.shade100, Colors.white],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const AuthHeaderWidget(
+                          title: 'Welcome Back',
+                          subtitle: 'Sign in to continue',
                         ),
-                        children: [
-                          TextSpan(
-                            text: 'Create an account',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              decoration: TextDecoration.underline,
+                        AuthFormContainerWidget(
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                AuthTextField(
+                                  header: 'Email',
+                                  hintText: 'Enter your email',
+                                  controller: _emailController,
+                                  obscureText: false,
+                                  validator: validateEmail,
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                                AuthTextField(
+                                  header: 'Password',
+                                  hintText: 'Enter your password',
+                                  controller: _passController,
+                                  obscureText: true,
+                                  validator: validatePassword,
+                                ),
+                                const SizedBox(height: 8),
+                                AuthButton(
+                                  text: 'Login',
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      log(_emailController.text);
+                                      context.read<AuthBloc>().add(
+                                        AuthLogin(
+                                          email: _emailController.text,
+                                          pasword: _passController.text,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 24),
+                                AuthNavigationLinkWidget(
+                                  leadingText: "Don't have an account?",
+                                  linkText: 'Create an account',
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SignUpScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
