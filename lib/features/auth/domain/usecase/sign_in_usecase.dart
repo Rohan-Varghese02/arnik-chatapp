@@ -3,7 +3,7 @@ import 'package:chat_app/core/error/failure.dart';
 import 'package:chat_app/core/usecase/usecase.dart';
 import 'package:chat_app/features/auth/domain/entities/user_data.dart';
 import 'package:chat_app/features/auth/domain/repository/auth_repository.dart';
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
 
 class SignInUsecase implements Usecase<UserData,UserSigninParams>{
     final AuthRepository authRepository;
