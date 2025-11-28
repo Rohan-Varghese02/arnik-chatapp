@@ -154,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   name: chat.name,
                                   lastMessage: chat.lastMessage,
                                   lastMessageTime: chat.lastMessageTime,
+                                  photoUrl: chat.photoUrl,
                                 ),
                               );
                             },

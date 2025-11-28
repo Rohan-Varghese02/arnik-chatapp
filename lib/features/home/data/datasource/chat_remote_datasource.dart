@@ -76,6 +76,7 @@ class ChatRemoteDatasourceImpl implements ChatRemoteDatasource {
               name: userData['name'] ?? '',
               lastMessage: lastMessage,
               lastMessageTime: lastMessageTime?.toDate(),
+              photoUrl: userData['photoUrl'] as String?,
             ));
           }
 

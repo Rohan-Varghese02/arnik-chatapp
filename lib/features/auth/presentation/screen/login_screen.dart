@@ -5,6 +5,7 @@ import 'package:chat_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:chat_app/features/auth/presentation/screen/sign_up_screen.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_button.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_form_container_widget.dart';
+import 'package:chat_app/features/auth/presentation/widget/auth_google.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_header_widget.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_navigation_link_widget.dart';
 import 'package:chat_app/features/auth/presentation/widget/auth_text_field.dart';
@@ -34,7 +35,21 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is GoogleSignInSuccess) {
+            Navigator.of(context).pushReplacementNamed('/home');
+          } else if (state is GoogleSignInFailed) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is LoginSuccess) {
+            Navigator.of(context).pushReplacementNamed('/home');
+          } else if (state is LoginFailed) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          }
+        },
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -88,6 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       );
                                     }
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                GoogleButton(
+                                  onTap: () {
+                                    context.read<AuthBloc>().add(
+                                      GoogleSignInRequested(),
+                                    );
                                   },
                                 ),
                                 const SizedBox(height: 24),

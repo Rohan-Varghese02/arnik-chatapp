@@ -7,6 +7,7 @@ class ChatModel extends ChatEntity {
     required super.name,
     super.lastMessage,
     super.lastMessageTime,
+    super.photoUrl,
   });
 
   factory ChatModel.fromFirestore(Map<String, dynamic> doc) {
@@ -19,6 +20,7 @@ class ChatModel extends ChatEntity {
       name: doc['name'] ?? '',
       lastMessage: doc['lastMessage'],
       lastMessageTime: lastMessageTime?.toDate(),
+      photoUrl: doc['photoUrl'],
     );
   }
 
@@ -30,6 +32,7 @@ class ChatModel extends ChatEntity {
       'lastMessageTime': lastMessageTime != null
           ? Timestamp.fromDate(lastMessageTime!)
           : null,
+      'photoUrl': photoUrl,
     };
   }
 }

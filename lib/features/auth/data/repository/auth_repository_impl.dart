@@ -16,8 +16,32 @@ class AuthRepositoryImpl implements AuthRepository{
   }
   
   @override
-  Future<Either<Failure, UserData>> signInWithEmailAndPassword({required String name, required String email, required String password}) async{
-    final response = await authRemoteDatasource.signInWithEmailAndPassword(name: name, email: email, password: password);
-    return right(response);
+  Future<Either<Failure, UserData>> signInWithEmailAndPassword({
+    required String name,
+    required String email,
+    required String password,
+    String? photoUrl,
+  }) async {
+    try {
+      final response = await authRemoteDatasource.signInWithEmailAndPassword(
+        name: name,
+        email: email,
+        password: password,
+        photoUrl: photoUrl,
+      );
+      return right(response);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserData>> signInWithGoogle() async {
+    try {
+      final response = await authRemoteDatasource.signInWithGoogle();
+      return right(response);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }

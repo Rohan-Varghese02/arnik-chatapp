@@ -14,7 +14,15 @@ class AuthLogin extends AuthEvent{
   final String name;
   final String email;
   final String password;
+  final String? photoUrl;
 
-  AuthSignIn({required this.name, required this.email, required this.password});
+  AuthSignIn({
+    required this.name,
+    required this.email,
+    required this.password,
+    this.photoUrl,
+  });
  }
+
+class GoogleSignInRequested extends AuthEvent {}
 

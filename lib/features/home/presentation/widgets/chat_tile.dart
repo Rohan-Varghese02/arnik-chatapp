@@ -1,14 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ChatTile extends StatelessWidget {
   final String name;
   final String? lastMessage;
   final DateTime? lastMessageTime;
+  final String? photoUrl;
   const ChatTile({
     super.key,
     required this.name,
     this.lastMessage,
     this.lastMessageTime,
+    this.photoUrl,
   });
 
   String _formatTime(DateTime? dateTime) {
@@ -66,14 +69,19 @@ class ChatTile extends StatelessWidget {
           CircleAvatar(
             radius: 28,
             backgroundColor: Colors.blue.shade50,
-            child: Text(
-              name[0].toUpperCase(),
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade700,
-              ),
-            ),
+            backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
+                ? CachedNetworkImageProvider(photoUrl!)
+                : null,
+            child: photoUrl == null || photoUrl!.isEmpty
+                ? Text(
+                    name.isNotEmpty ? name[0].toUpperCase() : '?',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade700,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 16),
           Expanded(

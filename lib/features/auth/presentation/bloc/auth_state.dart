@@ -29,3 +29,17 @@ class SignInFailed extends AuthState{
 
   SignInFailed({required this.message});
 }
+
+class GoogleSignInLoading extends AuthState {}
+
+class GoogleSignInSuccess extends AuthState {
+  final UserData user;
+
+  GoogleSignInSuccess({required this.user});
+}
+
+class GoogleSignInFailed extends AuthState {
+  final String message;
+
+  GoogleSignInFailed({required this.message});
+}

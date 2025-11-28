@@ -1,9 +1,11 @@
 import 'package:chat_app/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:chat_app/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:chat_app/features/auth/domain/repository/auth_repository.dart';
+import 'package:chat_app/features/auth/domain/usecase/google_sign_in_usecase.dart';
 import 'package:chat_app/features/auth/domain/usecase/login_usecase.dart';
 import 'package:chat_app/features/auth/domain/usecase/sign_in_usecase.dart';
 import 'package:chat_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:chat_app/features/home/data/datasource/chat_remote_datasource.dart';
 import 'package:chat_app/features/home/data/datasource/chat_stream_service.dart';
 import 'package:chat_app/features/home/data/repository/chat_repository_impl.dart';
@@ -28,10 +30,15 @@ final sl = GetIt.instance;
 Future<void> initDependencies() async {
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton(() => GoogleSignIn());
 
   // ========== Auth Feature ==========
   sl.registerLazySingleton<AuthRemoteDatasource>(
-    () => AuthRemoteDatasourceImpl(firebaseAuth: sl(), firestore: sl()),
+    () => AuthRemoteDatasourceImpl(
+      firebaseAuth: sl(),
+      firestore: sl(),
+      googleSignIn: sl(),
+    ),
   );
 
   sl.registerLazySingleton<AuthRepository>(
@@ -43,8 +50,17 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(
     () => SignInUsecase(authRepository: sl<AuthRepository>()),
   );
+  sl.registerLazySingleton(
+    () => GoogleSignInUsecase(authRepository: sl<AuthRepository>()),
+  );
 
-  sl.registerFactory(() => AuthBloc(userLogin: sl(), userSignIn: sl()));
+  sl.registerFactory(
+    () => AuthBloc(
+      userLogin: sl(),
+      userSignIn: sl(),
+      googleSignIn: sl(),
+    ),
+  );
 
   // ========== Home Feature ==========
   sl.registerLazySingleton<ChatRemoteDatasource>(

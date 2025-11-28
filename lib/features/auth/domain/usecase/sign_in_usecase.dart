@@ -12,7 +12,12 @@ class SignInUsecase implements Usecase<UserData,UserSigninParams>{
 
   @override
   Future<Either<Failure, UserData>> call(UserSigninParams params) {
-    return authRepository.signInWithEmailAndPassword(name: params.name, email: params.email, password: params.password);
+    return authRepository.signInWithEmailAndPassword(
+      name: params.name,
+      email: params.email,
+      password: params.password,
+      photoUrl: params.photoUrl,
+    );
   }
 }
 
@@ -21,6 +26,12 @@ class UserSigninParams {
   final String name;
   final String email;
   final String password;
+  final String? photoUrl;
 
-  UserSigninParams({required this.name, required this.email, required this.password});
+  UserSigninParams({
+    required this.name,
+    required this.email,
+    required this.password,
+    this.photoUrl,
+  });
 }
